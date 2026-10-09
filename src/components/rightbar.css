@@ -1,0 +1,120 @@
+/* ---------- Right sidebar ---------- */
+#rightbar {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 10;
+
+  width: var(--rightbar-w, 14rem);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  background: var(--side);
+  border-left: 1px solid var(--rule);
+  overflow-y: auto;
+
+  font-family: var(--font-ui);
+}
+
+/* ---------- TOC ---------- */
+#rightbar .rb-title {
+  margin: 0 0 0.75rem 0.25rem;
+  color: var(--ink-faint);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+#rb-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--rule);
+}
+
+#rb-list li { margin: 0; }
+
+#rb-list a {
+  display: block;
+  margin-left: -1px;
+  padding: 0.4rem 0.7rem;
+  border-left: 2px solid transparent;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+#rb-list a:hover {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+#rb-list a.active {
+  border-left-color: var(--mark);
+  background: var(--mark-soft);
+  color: var(--mark);
+  font-weight: 600;
+}
+
+/* ---------- Sponsored / Ads ---------- */
+#rightbar .rb-ad {
+  padding: 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  text-align: center;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+#rightbar .rb-ad:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--mark);
+}
+
+#rightbar .rb-ad a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+#rightbar .rb-ad img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 0.5rem;
+  border-radius: var(--r-sm);
+  object-fit: cover;
+}
+
+#rightbar .ad-tag {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--ink-faint);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#rightbar .ad-text {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+/* Push ads to bottom if space remains */
+#rightbar .rb-ad:last-child { margin-top: auto; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1150px) { #rightbar { display: none; } }
+@media print { #rightbar { display: none; } }

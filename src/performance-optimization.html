@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Learn React performance optimization: memo, code splitting, lazy loading, Core Web Vitals.">
+  <title>Performance Optimization — yogeshwebdev</title>
+
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="./components/navbar.css">
+  <link rel="stylesheet" href="./components/rightbar.css">
+</head>
+<body>
+
+  <!-- LEFT -->
+  <div id="navbar"></div>
+
+  <!-- CENTER -->
+  <main>
+    <h1>Performance Optimization</h1>
+
+    <section>
+      <h2>React.memo</h2>
+      <details>
+        <summary>Prevent unnecessary re-renders</summary>
+        <p>Wrap a component with <code>React.memo</code> to skip re-rendering when props haven't changed.</p>
+        <pre><code>const Item = React.memo(function Item({ label }) {
+  return &lt;li&gt;{label}&lt;/li&gt;;
+});</code></pre>
+      </details>
+    </section>
+
+    <section>
+      <h2>Code Splitting</h2>
+      <details><summary>React.lazy</summary><p>Load components on demand.</p></details>
+      <details><summary>Suspense</summary><p>Show a fallback while loading.</p></details>
+      <details><summary>Dynamic imports</summary><p>Use <code>import()</code> for route-level splits.</p></details>
+    </section>
+
+    <section>
+      <h2>Lazy Loading</h2>
+      <details><summary>Images</summary><p>Add <code>loading="lazy"</code> to images below the fold.</p></details>
+      <details><summary>Routes</summary><p>Split route bundles so first paint is fast.</p></details>
+      <details><summary>Components</summary><p>Defer heavy widgets with <code>IntersectionObserver</code>.</p></details>
+    </section>
+
+    <section>
+      <h2>Bundle Optimization</h2>
+      <details><summary>Tree shaking</summary><p>Import only what you use.</p></details>
+      <details><summary>Webpack / Vite config</summary><p>Analyze and trim your bundle.</p></details>
+    </section>
+
+    <section>
+      <h2>Web Vitals (LCP, CLS, INP)</h2>
+      <details>
+        <summary>Measure &amp; fix Core Web Vitals</summary>
+        <p>Use Lighthouse, PageSpeed Insights, or the <code>web-vitals</code> library.</p>
+      </details>
+    </section>
+
+    <section>
+      <h2>Caching Strategies</h2>
+      <details><summary>HTTP Cache</summary><p>Cache-Control, ETag, stale-while-revalidate.</p></details>
+      <details><summary>Service Workers</summary><p>Offline-first with Workbox.</p></details>
+      <details><summary>React Query</summary><p>Client-side data cache with staleTime.</p></details>
+    </section>
+  </main>
+
+  <!-- RIGHT -->
+  <aside id="rightbar" aria-label="On this page and sponsors"></aside>
+
+  <script src="./js/navbar.js"></script>
+  <script src="./js/rightbar.js"></script>
+</body>
+</html>

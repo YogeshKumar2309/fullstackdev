@@ -1,0 +1,327 @@
+/* ========================================
+   YogeshWebDev — Reading Theme + 3-col Layout
+   ======================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  color-scheme: light;
+
+  /* Warm, eye-friendly palette (reduces blue light) */
+  --page:        #f6f1e7;
+  --side:        #f1ebdd;
+  --surface:     #fbf8f1;
+  --surface-soft:#eee8da;
+  --ink:         #2f2f2b;
+  --ink-soft:    #5a5a52;
+  --ink-faint:   #8a8a80;
+  --mark:        #4f6f58;   /* deep sage green */
+  --mark-soft:   #e3ebdd;
+  --rule:        #e2dbc9;
+  --hover:       #ece6d7;
+  --shadow:      0 1px 2px rgba(60,55,40,0.04), 0 4px 12px rgba(60,55,40,0.04);
+
+  /* Layout */
+  --leftbar-w:  16rem;
+  --rightbar-w: 14rem;
+  --content-w:  46rem;      /* ~720px @ 16px */
+  --gap:        2rem;
+
+  /* Type */
+  --font-text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-ui:   "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  --reading-size: 18px;
+  --reading-line: 1.75;
+
+  /* Radius */
+  --r-sm: 5px;
+  --r-md: 8px;
+  --r-lg: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;      /* fixed navbar offset */
+  background: var(--page);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  background: var(--page);
+  color: var(--ink);
+
+  font-family: var(--font-text);
+  font-size: var(--reading-size);
+  line-height: var(--reading-line);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Auto padding — only when sidebars exist & visible */
+body:has(#navbar nav)   { padding-left:  var(--leftbar-w); }
+body:has(#rightbar:not([hidden])) { padding-right: var(--rightbar-w); }
+
+/* ---------- Content column ---------- */
+main {
+  width: 100%;
+  max-width: var(--content-w);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+}
+
+main > h1 {
+  margin: 0 0 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--rule);
+
+  font-family: var(--font-text);
+  font-size: clamp(1.85rem, 1.4rem + 1.4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-wrap: balance;                 /* modern browsers */
+  overflow-wrap: anywhere;
+}
+
+/* Chapter label above each h2 */
+main section {
+  margin: 0 0 3rem;
+  counter-increment: chapter;
+  scroll-margin-top: 5rem;
+}
+
+main { counter-reset: chapter; }
+
+main section > h2 {
+  position: relative;
+  margin: 0 0 1.25rem;
+  padding-top: 0.5rem;
+
+  font-family: var(--font-text);
+  font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+main section > h2::before {
+  content: "Chapter " counter(chapter);
+  display: block;
+  margin-bottom: 0.4rem;
+
+  color: var(--mark);
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+main h3 {
+  margin: 1.75rem 0 0.6rem;
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+main p {
+  margin: 0.75rem 0 1.15rem;
+  color: var(--ink-soft);
+}
+
+main strong { color: var(--ink); font-weight: 600; }
+
+main a {
+  color: var(--mark);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+main a:hover { text-decoration-thickness: 2px; }
+
+/* ---------- Details (accordions) ---------- */
+main details {
+  margin: 0.6rem 0;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+main details:hover { border-color: #d4ccb6; }
+main details[open] {
+  border-color: var(--mark);
+  box-shadow: var(--shadow);
+}
+
+main summary {
+  position: relative;
+  padding: 0.85rem 1.1rem 0.85rem 2.6rem;
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--r-md);
+  user-select: none;
+
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 0.94rem;
+  font-weight: 500;
+  line-height: 1.55;
+  transition: background 0.15s, color 0.15s;
+}
+
+main summary::-webkit-details-marker { display: none; }
+
+main summary::before {
+  content: "";
+  position: absolute;
+  left: 1.15rem;
+  top: 50%;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-right: 2px solid var(--ink-faint);
+  border-bottom: 2px solid var(--ink-faint);
+  transform: translateY(-70%) rotate(-45deg);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+main summary:hover { background: var(--hover); }
+
+main details[open] > summary {
+  color: var(--mark);
+  font-weight: 600;
+  background: var(--mark-soft);
+  border-radius: var(--r-md) var(--r-md) 0 0;
+}
+
+main details[open] > summary::before {
+  transform: translateY(-40%) rotate(45deg);
+  border-color: var(--mark);
+}
+
+main details > *:not(summary) {
+  padding: 0 1.1rem 1.1rem 2.6rem;
+  margin: 0;
+}
+
+main details > *:not(summary):first-of-type { padding-top: 0.5rem; }
+
+/* ---------- Code ---------- */
+pre {
+  max-width: 100%;
+  margin: 1.3rem 0;
+  padding: 1.15rem 1.3rem;
+  overflow-x: auto;
+
+  background: var(--surface-soft);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+code { font-family: var(--font-mono); font-size: 0.88em; }
+
+:not(pre) > code {
+  padding: 0.12em 0.4em;
+  background: var(--surface-soft);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Lists ---------- */
+main ul, main ol {
+  padding-left: 1.5rem;
+  color: var(--ink-soft);
+}
+main li { margin: 0.4rem 0; padding-left: 0.15rem; }
+main li::marker { color: var(--mark); }
+
+/* ---------- Tables ---------- */
+main table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+}
+main th, main td {
+  padding: 0.75rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--rule);
+}
+main th {
+  background: var(--surface-soft);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- Media ---------- */
+main img, main video, main iframe {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--r-md);
+}
+
+/* ---------- Focus / selection ---------- */
+::selection { background: var(--mark-soft); color: var(--ink); }
+:focus-visible {
+  outline: 2px solid var(--mark);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1150px) {
+  body:has(#rightbar:not([hidden])) { padding-right: 0; }
+  #rightbar { display: none; }
+}
+
+@media (max-width: 860px) {
+  body:has(#navbar nav) { padding-left: 0; }
+  main { padding: 2rem 1.25rem 4rem; }
+  main > h1 { margin-top: 1rem; }
+}
+
+@media (max-width: 520px) {
+  :root { --reading-size: 16.5px; --reading-line: 1.7; }
+  main { padding: 1.5rem 1rem 3rem; }
+  main section { margin-bottom: 2.25rem; }
+  main summary { padding: 0.75rem 0.9rem 0.75rem 2.3rem; font-size: 0.92rem; }
+  main summary::before { left: 0.95rem; }
+  main details > *:not(summary) { padding: 0 0.9rem 0.9rem 2.3rem; }
+  pre { padding: 0.9rem; font-size: 0.78rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  body { padding: 0 !important; background: #fff; color: #000; }
+  main { max-width: none; padding: 0; }
+  main details { break-inside: avoid; }
+  main details > *:not(summary) { display: block !important; }
+  #navbar, #rightbar { display: none !important; }
+}
