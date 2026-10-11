@@ -3,35 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home — yogeshwebdev</title>
+  <title>yogeshwebdev — Frontend & Backend Notes</title>
+  <meta name="description" content="Practical notes on frontend and backend development — CSS, JavaScript, React, Node.js, system design and more.">
 
   <link rel="stylesheet" href="index.css">
   <link rel="stylesheet" href="./components/navbar.css">
   <link rel="stylesheet" href="./components/rightbar.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
 
   <div id="navbar"></div>
 
-  <main>
-    <h1>Welcome to yogeshwebdev</h1>
-    <p>Practical notes on frontend development — CSS, JavaScript, React, performance, and system design.</p>
+  <main class="home">
 
-    <section>
-      <h2>What you'll find here</h2>
-      <p>...</p>
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <span class="badge">📚 16+ topics · Free forever</span>
+      <h1>
+        Learn <span class="gradient">frontend</span> &amp;
+        <span class="gradient">backend</span> the practical way
+      </h1>
+      <p class="lead">
+        Hands-on notes on CSS, JavaScript, React, Node.js, databases,
+        system design and deployment — written for developers who want
+        to build real projects, not just read theory.
+      </p>
+
+      <div class="cta">
+        <a href="#latest" class="btn btn-primary">Start Reading →</a>
+        <a href="projects.html" class="btn btn-ghost">View Projects</a>
+      </div>
+
+      <div class="stats">
+        <div><strong>16+</strong><span>Topics</span></div>
+        <div><strong>100+</strong><span>Code examples</span></div>
+        <div><strong>0₹</strong><span>Forever free</span></div>
+      </div>
     </section>
 
-    <section>
+    <!-- ============ CATEGORIES ============ -->
+    <section class="categories">
+      <h2>Browse by category</h2>
+
+      <div class="grid">
+
+        <a class="card" href="css-and-layout.html">
+          <div class="icon">🎨</div>
+          <h3>CSS &amp; Layout</h3>
+          <p>Flexbox, Grid, responsive design, animations.</p>
+        </a>
+
+        <a class="card" href="frontend-javascript.html">
+          <div class="icon">⚡</div>
+          <h3>Frontend JavaScript</h3>
+          <p>Closures, async, DOM, events, ES6+.</p>
+        </a>
+
+        <a class="card" href="react-and-hooks.html">
+          <div class="icon">⚛️</div>
+          <h3>React &amp; Hooks</h3>
+          <p>State, effects, custom hooks, patterns.</p>
+        </a>
+
+        <a class="card" href="performance-optimization.html">
+          <div class="icon">🚀</div>
+          <h3>Performance</h3>
+          <p>Lazy loading, memoization, Core Web Vitals.</p>
+        </a>
+
+        <a class="card" href="testing-frontend.html">
+          <div class="icon">🧪</div>
+          <h3>Testing (Frontend)</h3>
+          <p>Jest, React Testing Library, mocking.</p>
+        </a>
+
+        <a class="card" href="coding-round.html">
+          <div class="icon">💻</div>
+          <h3>Machine Round</h3>
+          <p>Live coding patterns &amp; interview prep.</p>
+        </a>
+
+        <a class="card" href="nodejs-fundamentals.html">
+          <div class="icon">🟢</div>
+          <h3>Node.js</h3>
+          <p>Event loop, streams, modules, fs.</p>
+        </a>
+
+        <a class="card" href="express-rest-api.html">
+          <div class="icon">🛠️</div>
+          <h3>Express / REST</h3>
+          <p>Routing, middleware, REST design.</p>
+        </a>
+
+        <a class="card" href="databases.html">
+          <div class="icon">🗄️</div>
+          <h3>Databases</h3>
+          <p>SQL, MongoDB, schema design, indexes.</p>
+        </a>
+
+        <a class="card" href="auth-security.html">
+          <div class="icon">🔐</div>
+          <h3>Auth &amp; Security</h3>
+          <p>JWT, sessions, OAuth, best practices.</p>
+        </a>
+
+        <a class="card" href="devops-deployment.html">
+          <div class="icon">☁️</div>
+          <h3>DevOps &amp; Deploy</h3>
+          <p>Docker, CI/CD, hosting, env vars.</p>
+        </a>
+
+        <a class="card" href="system-design-backend.html">
+          <div class="icon">🏗️</div>
+          <h3>System Design</h3>
+          <p>Scaling, caching, queues, architecture.</p>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ============ LATEST ARTICLES ============ -->
+    <section id="latest" class="latest">
       <h2>Latest articles</h2>
-      <ul>
-        <li><a href="css-and-layout.html">CSS &amp; Layout</a></li>
-        <li><a href="frontend-javascript.html">Frontend JavaScript</a></li>
-        <li><a href="react-and-hooks.html">React &amp; Hooks</a></li>
-        <li><a href="performance-optimization.html">Performance Optimization</a></li>
-        <li><a href="system-design-frontend.html">System Design</a></li>
+
+      <ul class="list">
+        <li>
+          <a href="frontend-javascript.html">
+            <span class="tag">JS</span>
+            <div>
+              <h3>Closures, Hoisting &amp; the Event Loop</h3>
+              <p>Deep dive into how JS actually runs your code.</p>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <a href="react-and-hooks.html">
+            <span class="tag">React</span>
+            <div>
+              <h3>Custom Hooks — Write Once, Reuse Everywhere</h3>
+              <p>Build useFetch, useDebounce, useLocalStorage.</p>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <a href="performance-optimization.html">
+            <span class="tag">Perf</span>
+            <div>
+              <h3>React re-renders — The Complete Guide</h3>
+              <p>useMemo, useCallback, React.memo and when to use them.</p>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <a href="nodejs-fundamentals.html">
+            <span class="tag">Node</span>
+            <div>
+              <h3>The Node.js Event Loop Explained</h3>
+              <p>Timers, microtasks, macrotasks — with diagrams.</p>
+            </div>
+          </a>
+        </li>
+
+        <li>
+          <a href="system-design-frontend.html">
+            <span class="tag">Design</span>
+            <div>
+              <h3>Design a Job Board — Frontend System Design</h3>
+              <p>Search, filters, infinite scroll, caching.</p>
+            </div>
+          </a>
+        </li>
       </ul>
     </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section class="about">
+      <h2>What you'll find here</h2>
+      <p>
+        Every article is a <strong>working note</strong> — built from real
+        projects, real bugs, and real interviews. No fluff, no 40-minute
+        intros. Just code, explanations, and patterns you can copy into
+        your next project today.
+      </p>
+    </section>
+
+    <!-- ============ NEWSLETTER ============ -->
+    <section class="newsletter">
+      <h2>Get new notes in your inbox</h2>
+      <p>One email per week. No spam. Unsubscribe anytime.</p>
+      <form onsubmit="event.preventDefault(); alert('Subscribed! (demo)');">
+        <input type="email" placeholder="you@example.com" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </section>
+
   </main>
 
   <aside id="rightbar" aria-label="Sponsors"></aside>

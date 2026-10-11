@@ -5,7 +5,7 @@ import os
 import threading
 import time
 
-PORT = 5000
+PORT = 8000
 FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 # ---- File watcher ----

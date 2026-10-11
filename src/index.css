@@ -24,7 +24,7 @@
   /* Layout */
   --leftbar-w:  16rem;
   --rightbar-w: 14rem;
-  --content-w:  46rem;      /* ~720px @ 16px */
+  --content-w:  80rem;      /* ~720px @ 16px */
   --gap:        2rem;
 
   /* Type */

@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="./components/navbar.css">
     <link rel="stylesheet" href="./components/rightbar.css">
+    <style>
+    main img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;        /* har image 16:9 box me */
+    object-fit: contain;         /* poori image dikhe, stretch na ho */
+    margin: 1.25rem 0;
+    border: 1px solid var(--rule);
+    border-radius: var(--r-md);
+    background: var(--surface);  /* extra space fill kare */
+}
+    </style>
 </head>
 
 <body>
@@ -17,234 +29,1064 @@
         <h1>Phase 1. JavaScript Deep Dive</h1>
 
         <section>
-            <h2>Closures & Scope</h2>
+            <h2>Closures &amp; Scope</h2>
 
             <details>
                 <summary>Lexical Scope</summary>
-
                 <p>
-                    Lexical scope ka matlab hai ki variable ko uski
-                    code ki position ke according access kiya jata hai.
-
-                    
+                    Variable access depends on <strong>where code is written</strong>,
+                    not where it is called. JS walks up the scope chain at compile time.
                 </p>
-                <pre><code>
-                    console.log('testing');
-                    let a = 10;
-                    let b = 20;
-                    console.log('the sum is', (a+b));
-                </code></pre>  <pre><code>
-                    console.log('testing');
-                    let a = 10;
-                    let b = 20;
-                    console.log('the sum is', (a+b));
-                </code></pre>
-                   <p>
-                    Lexical scope ka matlab hai ki variable ko uski
-                    code ki position ke according access kiya jata hai.
-
-                    
-                </p>
-
-
+                <img src="./assets/images/frontend-javascript/lexical-scope.svg" alt="Scope chain: inner → outer → global" loading="lazy">
+                <pre><code>const outer = () =&gt; {
+  const greeting = "Hello";
+  const inner = () =&gt; console.log(greeting);
+  inner();  // "Hello"
+};
+outer();
+</code></pre>
             </details>
 
+            <details>
+                <summary>What is a Closure?</summary>
+                <p>
+                    A function that <strong>remembers variables</strong> from where it
+                    was created, even after the outer function has returned.
+                </p>
+                <img src="./assets/images/frontend-javascript/closure-memory.svg" alt="Closure keeps outer scope alive" loading="lazy">
+                <pre><code>const makeCounter = () =&gt; {
+  let count = 0;
+  return () =&gt; ++count;
+};
+
+const c = makeCounter();
+c(); // 1
+c(); // 2
+</code></pre>
+            </details>
 
             <details>
                 <summary>Closure Traps in Loops</summary>
-
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
+                <p><code>var</code> shares one variable — all callbacks see the final value.</p>
+                <pre><code>for (var i = 0; i &lt; 3; i++) {
+  setTimeout(() =&gt; console.log(i), 100);
+}
+// ❌ 3  3  3
+</code></pre>
+                <p><strong>Fix:</strong> use <code>let</code> → new binding per iteration.</p>
+                <pre><code>for (let i = 0; i &lt; 3; i++) {
+  setTimeout(() =&gt; console.log(i), 100);
+}
+// ✅ 0  1  2
+</code></pre>
+                <img src="./assets/images/frontend-javascript/var-loop-trap.svg" alt="var shares one binding vs let per-iteration"
+                    loading="lazy">
             </details>
-        </section>
 
+            <details>
+                <summary>Real-World Uses</summary>
+                <ul>
+                    <li><strong>Data privacy</strong> — module pattern</li>
+                    <li><strong>Function factories</strong> — <code>multiplyBy(2)(5)</code></li>
+                    <li><strong>Debounce / throttle</strong></li>
+                    <li><strong>Event handlers</strong> remembering state</li>
+                </ul>
+            </details>
+
+            <details>
+                <summary>Common Pitfalls</summary>
+                <ul>
+                    <li>Closures keep the whole outer scope alive → memory leaks</li>
+                    <li>Always <code>removeEventListener</code> / <code>clearInterval</code></li>
+                    <li>Inspect with DevTools → Sources → Scope panel</li>
+                </ul>
+                <img src="./assets/images/frontend-javascript/devtools-scope.svg" alt="DevTools Closure scope panel" loading="lazy">
+            </details>
+
+        </section>
 
         <section>
             <h2>Event Loop</h2>
 
             <details>
                 <summary>Call Stack</summary>
-
                 <p>
-                    Lexical scope ka matlab hai ki variable ko uski
-                    code ki position ke according access kiya jata hai.
+                    JavaScript does <strong>one thing at a time</strong>. The
+                    Call Stack is that "to-do list" — the function currently
+                    running sits on top, the ones waiting sit below.
                 </p>
+                <pre><code>function a() { b(); }
+function b() { console.log("hi"); }
 
-
+a();
+// Stack: a → b → console.log → (done)
+</code></pre>
+                <img src="./assets/images/frontend-javascript/call-stack.svg" alt="Call stack pushing and popping functions" loading="lazy">
             </details>
 
+            <details>
+                <summary>Web APIs + Callback Queue</summary>
+                <p>
+                    <code>setTimeout</code>, <code>fetch</code>, <code>click</code> —
+                    these are not JavaScript's job, they belong to the
+                    <strong>browser</strong>. The browser runs them in the background
+                    and, when done, drops the callback into a
+                    <strong>queue</strong>.
+                </p>
+                <img src="./assets/images/frontend-javascript/web-api-queue.svg" alt="Web APIs hand off callbacks to the callback queue"
+                    loading="lazy">
+            </details>
+
+            <details>
+                <summary>Event Loop (the traffic police 🚦)</summary>
+                <p>
+                    The Event Loop does exactly one thing:
+                    <strong>"Is the stack empty? Then take the next task from the queue."</strong>
+                </p>
+                <pre><code>console.log("1");
+
+setTimeout(() =&gt; console.log("2"), 0);
+
+console.log("3");
+
+// Output: 1  3  2
+</code></pre>
+                <p>
+                    <code>setTimeout(0)</code> does not mean 0ms — it means
+                    <strong>"run me later"</strong>. It waits for the stack to clear first.
+                </p>
+            </details>
+
+            <details>
+                <summary>Microtasks vs Macrotasks</summary>
+                <p>
+                    <strong>Microtasks</strong> (Promise, <code>queueMicrotask</code>) —
+                    high priority, the Event Loop finishes them <em>first</em>.<br>
+                    <strong>Macrotasks</strong> (<code>setTimeout</code>,
+                    <code>setInterval</code>, I/O) — run afterwards.
+                </p>
+                <pre><code>console.log("1");
+
+setTimeout(() =&gt; console.log("2"), 0);   // macrotask
+Promise.resolve().then(() =&gt; console.log("3")); // microtask
+
+console.log("4");
+
+// Output: 1  4  3  2
+</code></pre>
+                <img src="./assets/images/frontend-javascript/micro-vs-macro.svg"
+                    alt="Microtask queue drains fully before the next macrotask" loading="lazy">
+            </details>
 
             <details>
                 <summary>Error Handling</summary>
+                <p>
+                    Catch errors with <code>try / catch</code>. For async code, use
+                    <code>try/catch</code> with <code>await</code>, or attach
+                    <code>.catch()</code> to the Promise.
+                </p>
+                <pre><code>// Sync
+try {
+  JSON.parse("{ bad json }");
+} catch (err) {
+  console.error("Parse fail:", err.message);
+}
 
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
+// Async
+async function load() {
+  try {
+    const res = await fetch("/api");
+    const data = await res.json();
+  } catch (err) {
+    console.error("Fetch fail:", err);
+  }
+}
+</code></pre>
+                <p>
+                    <strong>Remember:</strong> <code>try/catch</code> only catches
+                    errors from the <em>same</em> function. An error inside a
+                    <code>setTimeout</code> callback will <em>not</em> bubble up to
+                    the outer try/catch.
+                </p>
             </details>
-            <details>
-                <summary>Macrotasks</summary>
 
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
-            </details>
         </section>
 
 
-
         <section>
-            <h2>Promises & async/await</h2>
+            <h2>Promises &amp; async/await</h2>
+
+            <details>
+                <summary>Why Promises?</summary>
+                <p>
+                    A <strong>Promise</strong> is JavaScript's way of saying
+                    <em>"I don't have the value yet, but I will — or I'll fail trying."</em>
+                    It has three states: <code>pending</code>, <code>fulfilled</code>,
+                    <code>rejected</code>.
+                </p>
+                <pre><code>const p = fetch("/api/user");
+// pending → fulfilled (with data) OR rejected (with error)
+</code></pre>
+                <img src="./assets/images/frontend-javascript/promise-states.svg"
+                    alt="Promise state machine: pending to fulfilled or rejected" loading="lazy">
+            </details>
 
             <details>
                 <summary>Chaining</summary>
-
                 <p>
-                    Lexical scope ka matlab hai ki variable ko uski
-                    code ki position ke according access kiya jata hai.
+                    A Promise returns another Promise, so you can chain
+                    <code>.then()</code> calls in a clean, readable way.
                 </p>
-
-
+                <pre><code>fetch("/api/user")
+  .then(res =&gt; res.json())
+  .then(user =&gt; fetch(`/api/posts/${user.id}`))
+  .then(res =&gt; res.json())
+  .then(posts =&gt; console.log(posts));
+</code></pre>
+                <p>
+                    Each <code>.then()</code> receives the value returned by the
+                    previous one. This is why chaining works — nothing blocks.
+                </p>
+                <img src="./assets/images/frontend-javascript/promise-chain.svg"
+                    alt="Promise chain passing values from one then to the next" loading="lazy">
             </details>
-
 
             <details>
-                <summary>Error handling</summary>
-
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
+                <summary>async / await</summary>
+                <p>
+                    <code>async/await</code> is just <strong>syntactic sugar</strong>
+                    over Promises. Same thing, but reads like normal code.
+                </p>
+                <pre><code>async function loadUser() {
+  const res  = await fetch("/api/user");
+  const user = await res.json();
+  return user;
+}
+</code></pre>
+                <p>
+                    <strong>Rule:</strong> <code>await</code> can only be used inside
+                    an <code>async</code> function. An <code>async</code> function
+                    always returns a Promise — even if you <code>return 5</code>.
+                </p>
             </details>
+
+            <details>
+                <summary>Error Handling</summary>
+                <p>
+                    Use <code>try / catch</code> with <code>await</code>, or
+                    <code>.catch()</code> at the end of a chain.
+                </p>
+                <pre><code>// async/await
+async function load() {
+  try {
+    const res = await fetch("/api");
+    if (!res.ok) throw new Error("Bad response");
+    return await res.json();
+  } catch (err) {
+    console.error("Failed:", err.message);
+  } finally {
+    console.log("Done (success or fail)");
+  }
+}
+
+// .catch()
+fetch("/api")
+  .then(r =&gt; r.json())
+  .catch(err =&gt; console.error(err));
+</code></pre>
+                <p>
+                    <strong>Watch out:</strong> a rejected Promise that nobody
+                    catches triggers an <em>UnhandledPromiseRejection</em> and can
+                    crash the process in Node.
+                </p>
+            </details>
+
             <details>
                 <summary>Promise.all</summary>
-
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
+                <p>
+                    Run many Promises <strong>in parallel</strong> and wait for
+                    <em>all</em> to finish. Returns an array of results.
+                </p>
+                <pre><code>const [user, posts, comments] = await Promise.all([
+  fetch("/api/user").then(r =&gt; r.json()),
+  fetch("/api/posts").then(r =&gt; r.json()),
+  fetch("/api/comments").then(r =&gt; r.json()),
+]);
+</code></pre>
+                <p>
+                    <strong>Key point:</strong> if <em>any</em> Promise rejects,
+                    <code>Promise.all</code> rejects immediately — even if others
+                    succeed.
+                </p>
             </details>
+
+            <details>
+                <summary>allSettled, race, any</summary>
+                <ul>
+                    <li><code>Promise.allSettled</code> — waits for all, never rejects, gives status of each.</li>
+                    <li><code>Promise.race</code> — resolves/rejects with whichever finishes first.</li>
+                    <li><code>Promise.any</code> — resolves with the first success, ignores failures.</li>
+                </ul>
+                <pre><code>const results = await Promise.allSettled([
+  fetch("/api/a"),
+  fetch("/api/b"),
+]);
+// [{ status: "fulfilled", value }, { status: "rejected", reason }]
+</code></pre>
+            </details>
+
         </section>
 
         <section>
-            <h2>Prototype chain</h2>
+            <h2>Prototype Chain</h2>
+
+            <details>
+                <summary>Why Prototypes?</summary>
+                <p>
+                    JavaScript doesn't use classes like Java does — under the hood
+                    it uses <strong>prototypes</strong>. Every object has a hidden
+                    link to another object called its <strong>prototype</strong>.
+                    When you access a property, JS looks at the object first, then
+                    walks up this chain until it finds it (or hits <code>null</code>).
+                </p>
+                <img src="./assets/images/frontend-javascript/prototype-chain.svg" alt="Object to prototype to prototype to null chain"
+                    loading="lazy">
+            </details>
 
             <details>
                 <summary>Inheritance</summary>
-
                 <p>
-                    Lexical scope ka matlab hai ki variable ko uski
-                    code ki position ke according access kiya jata hai.
+                    <strong>Inheritance</strong> in JS means: one object can reuse
+                    properties and methods of another object through the prototype
+                    chain. No copying — just a link.
                 </p>
+                <pre><code>const animal = {
+  speak() { console.log(this.name + " makes a sound"); }
+};
 
+const dog = Object.create(animal);
+dog.name = "Rex";
 
+dog.speak();  // "Rex makes a sound"
+// dog didn't define speak() — it inherited it
+</code></pre>
+                <p>
+                    When you call <code>dog.speak()</code>, JS checks:
+                    <br>1. Does <code>dog</code> have <code>speak</code>? ❌
+                    <br>2. Does <code>dog.__proto__</code> (which is <code>animal</code>)? ✅ → use it
+                </p>
             </details>
-
 
             <details>
-                <summary>__Proto__</summary>
+                <summary>__proto__ vs prototype</summary>
+                <p>
+                    These two look similar but mean different things:
+                </p>
+                <ul>
+                    <li>
+                        <code>__proto__</code> — the actual link on an
+                        <strong>instance</strong> pointing to its parent object.
+                    </li>
+                    <li>
+                        <code>prototype</code> — a property that lives on
+                        <strong>functions</strong> (used when the function is called
+                        with <code>new</code>).
+                    </li>
+                </ul>
+                <pre><code>function User(name) {
+  this.name = name;
+}
 
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
+User.prototype.greet = function () {
+  console.log("Hi, " + this.name);
+};
+
+const u = new User("Yogesh");
+
+u.greet();                        // "Hi, Yogesh"
+u.__proto__ === User.prototype;   // true
+</code></pre>
+                <p>
+                    <strong>Remember:</strong> <code>__proto__</code> is the link.
+                    <code>prototype</code> is the blueprint.
+                </p>
+                <img src="./assets/images/frontend-javascript/proto-vs-prototype.svg"
+                    alt="__proto__ points from instance to prototype; prototype lives on the constructor function"
+                    loading="lazy">
             </details>
+
             <details>
-                <summary>Object.create</summary>
+                <summary>Object.create()</summary>
+                <p>
+                    <code>Object.create(proto)</code> creates a new object whose
+                    prototype <em>is</em> the object you pass in. Clean and direct —
+                    no constructor needed.
+                </p>
+                <pre><code>const base = {
+  greet() { console.log("Hello!"); }
+};
 
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
+const child = Object.create(base);
+
+child.greet();              // "Hello!"  (inherited)
+Object.getPrototypeOf(child) === base;  // true
+</code></pre>
+                <p>
+                    You can also pass a second argument to define properties:
+                </p>
+                <pre><code>const obj = Object.create(base, {
+  name: { value: "Yogesh", writable: false }
+});
+</code></pre>
             </details>
+
+            <details>
+                <summary>class is just sugar 🍬</summary>
+                <p>
+                    The modern <code>class</code> syntax looks clean, but under the
+                    hood it still uses prototypes.
+                </p>
+                <pre><code>class Animal {
+  speak() { console.log("sound"); }
+}
+
+class Dog extends Animal {}
+
+const d = new Dog();
+d.speak();  // "sound"  (inherited via prototype chain)
+</code></pre>
+                <p>
+                    <code>extends</code> = "link my prototype to that one".
+                    That's it. No magic.
+                </p>
+            </details>
+
+            <details>
+                <summary>Common gotchas</summary>
+                <ul>
+                    <li>
+                        <strong>Property shadowing:</strong> if the child defines the
+                        same property, it hides the parent's. Use
+                        <code>super.method()</code> to reach the parent.
+                    </li>
+                    <li>
+                        <strong>Shared arrays:</strong> don't put arrays/objects on
+                        <code>prototype</code> unless you want them shared by all
+                        instances.
+                    </li>
+                    <li>
+                        <strong>Never modify built-ins</strong> like
+                        <code>Array.prototype</code> — you'll break other code.
+                    </li>
+                    <li>
+                        <strong>End of chain:</strong> <code>Object.prototype.__proto__</code>
+                        is <code>null</code>. Lookup stops there.
+                    </li>
+                </ul>
+            </details>
+
         </section>
 
-
         <section>
-            <h2>Var/Let/Const</h2>
+            <h2>var / let / const</h2>
 
             <details>
                 <summary>Hoisting</summary>
-
                 <p>
-                    Lexical scope ka matlab hai ki variable ko uski
-                    code ki position ke according access kiya jata hai.
+                    <strong>Hoisting</strong> means JavaScript moves declarations
+                    to the top of their scope <em>before</em> the code runs. So you
+                    can reference some things before they're written — but each
+                    keyword behaves differently.
                 </p>
-            </details>
+                <pre><code>console.log(a);  // undefined
+var a = 10;
 
+console.log(b);  // ❌ ReferenceError
+let b = 20;
+
+console.log(c);  // ❌ ReferenceError
+const c = 30;
+</code></pre>
+                <p>
+                    <code>var</code> is hoisted and initialised with
+                    <code>undefined</code>. <code>let</code> and <code>const</code>
+                    are hoisted too, but they stay <em>uninitialised</em> until the
+                    line where they're declared.
+                </p>
+                <img src="./assets/images/frontend-javascript/hoisting.svg"
+                    alt="var hoisted as undefined; let and const hoisted but uninitialised" loading="lazy">
+            </details>
 
             <details>
-                <summary>TDZ</summary>
-
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
+                <summary>TDZ (Temporal Dead Zone)</summary>
+                <p>
+                    The <strong>Temporal Dead Zone</strong> is the gap between the
+                    start of a scope and the line where a <code>let</code> /
+                    <code>const</code> variable is declared. Inside that gap, the
+                    variable exists but you <em>cannot</em> touch it.
+                </p>
+                <pre><code>{
+  // ---- TDZ starts ----
+  console.log(x);  // ❌ ReferenceError: Cannot access 'x' before initialization
+  let x = 5;
+  // ---- TDZ ends ----
+  console.log(x);  // 5
+}
+</code></pre>
+                <p>
+                    <strong>Why it exists:</strong> it catches bugs. With
+                    <code>var</code> you'd silently get <code>undefined</code>;
+                    with <code>let</code> you get a loud error — much better.
+                </p>
+                <img src="./assets/images/frontend-javascript/tdz.svg"
+                    alt="Temporal Dead Zone between scope start and let/const declaration" loading="lazy">
             </details>
+
             <details>
-                <summary>Block vs funtion scope</summary>
+                <summary>Block vs Function Scope</summary>
+                <p>
+                    <strong>Function scope:</strong> <code>var</code> is visible
+                    anywhere inside the function it's declared in.<br>
+                    <strong>Block scope:</strong> <code>let</code> and
+                    <code>const</code> only live inside the <code>{ }</code> they
+                    were declared in.
+                </p>
+                <pre><code>function test() {
+  if (true) {
+    var a = 1;      // function-scoped
+    let b = 2;      // block-scoped
+    const c = 3;    // block-scoped
+  }
 
-                <div>Yahan Closure Traps in Loops ke notes likho.</div>
-
+  console.log(a);   // ✅ 1
+  console.log(b);   // ❌ ReferenceError
+  console.log(c);   // ❌ ReferenceError
+}
+</code></pre>
+                <img src="./assets/images/frontend-javascript/block-vs-function-scope.svg"
+                    alt="var leaks out of the block; let and const stay inside" loading="lazy">
             </details>
+
+            <details>
+                <summary>var vs let vs const — quick table</summary>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th><code>var</code></th>
+                            <th><code>let</code></th>
+                            <th><code>const</code></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Scope</td>
+                            <td>Function</td>
+                            <td>Block</td>
+                            <td>Block</td>
+                        </tr>
+                        <tr>
+                            <td>Hoisted</td>
+                            <td>Yes (undefined)</td>
+                            <td>Yes (TDZ)</td>
+                            <td>Yes (TDZ)</td>
+                        </tr>
+                        <tr>
+                            <td>Reassign</td>
+                            <td>✅</td>
+                            <td>✅</td>
+                            <td>❌</td>
+                        </tr>
+                        <tr>
+                            <td>Redeclare in same scope</td>
+                            <td>✅</td>
+                            <td>❌</td>
+                            <td>❌</td>
+                        </tr>
+                        <tr>
+                            <td>Must initialise</td>
+                            <td>❌</td>
+                            <td>❌</td>
+                            <td>✅</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </details>
+
+            <details>
+                <summary>const ≠ immutable</summary>
+                <p>
+                    <code>const</code> means the <em>binding</em> can't change — but
+                    the value inside can still be mutated if it's an object or array.
+                </p>
+                <pre><code>const user = { name: "Yogesh" };
+user.name = "Yogi";       // ✅ allowed
+user = {};                // ❌ TypeError
+
+const nums = [1, 2, 3];
+nums.push(4);             // ✅ allowed
+nums = [];                // ❌ TypeError
+</code></pre>
+                <p>
+                    Use <code>Object.freeze()</code> if you truly want it locked:
+                </p>
+                <pre><code>const config = Object.freeze({ theme: "dark" });
+config.theme = "light";   // silently ignored (or throws in strict mode)
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Best practice</summary>
+                <ul>
+                    <li>Prefer <code>const</code> by default.</li>
+                    <li>Use <code>let</code> only when you need to reassign.</li>
+                    <li>Avoid <code>var</code> — it leaks out of blocks and causes loop bugs.</li>
+                    <li>Always initialise <code>const</code> at declaration time.</li>
+                </ul>
+            </details>
+
         </section>
+       <section>
+    <h2>The <code>this</code> Keyword</h2>
 
-        <section>
-            <h2>'this' keyword</h2>
+    <details>
+        <summary>What is <code>this</code>?</summary>
+        <p>
+            <code>this</code> is a special keyword that points to
+            <strong>who is calling the function</strong> — not where it was
+            written. Its value is decided <em>at call time</em>, not at
+            definition time.
+        </p>
+        <pre><code>const user = {
+  name: "Yogesh",
+  greet() { console.log("Hi, " + this.name); }
+};
 
-            <details>
-                <summary>Implicit</summary>
+user.greet();   // "Hi, Yogesh"  → this = user
+</code></pre>
+        <p><strong>Golden rule:</strong> look at <em>how</em> the function is called — that tells you what <code>this</code> is.</p>
+    </details>
 
-                <p>
-                    Lexical scope ka matlab hai ki variable ko uski
-                    code ki position ke according access kiya jata hai.
-                </p>
+    <details>
+        <summary>Implicit Binding</summary>
+        <p>
+            When you call a method <strong>through an object</strong>
+            (<code>obj.method()</code>), <code>this</code> becomes that
+            object. That's implicit binding.
+        </p>
+        <pre><code>const car = {
+  brand: "Tesla",
+  show() { console.log(this.brand); }
+};
 
+car.show();   // "Tesla"  → this = car
+</code></pre>
+        <p>
+            ⚠️ <strong>Watch out:</strong> if you detach the method,
+            <code>this</code> is lost.
+        </p>
+        <pre><code>const fn = car.show;
+fn();   // undefined  → this = window (or undefined in strict)
+</code></pre>
+        <img src="./assets/images/frontend-javascript/implicit-this.svg"
+             alt="obj.method() — this points to the object on the left of the dot" loading="lazy">
+    </details>
 
-            </details>
+    <details>
+        <summary>Explicit Binding — call / apply / bind</summary>
+        <p>
+            You can <strong>force</strong> what <code>this</code> should be
+            using <code>call</code>, <code>apply</code>, or
+            <code>bind</code>.
+        </p>
+        <pre><code>function greet(greeting) {
+  console.log(greeting + ", " + this.name);
+}
 
+const user = { name: "Yogesh" };
 
-            <details>
-                <summary>Explicit</summary>
+greet.call(user, "Hello");       // "Hello, Yogesh"
+greet.apply(user, ["Hi"]);       // "Hi, Yogesh"
 
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
-            </details>
-            <details>
-                <summary>Arrow funtion</summary>
+const bound = greet.bind(user);  // returns a new function
+bound("Hey");                    // "Hey, Yogesh"
+</code></pre>
+        <p>
+            <strong>Diff:</strong> <code>call</code> takes args one by one,
+            <code>apply</code> takes an array, <code>bind</code> returns a
+            new bound function.
+        </p>
+        <img src="./assets/images/frontend-javascript/explicit-this.svg"
+             alt="call, apply, bind set this explicitly" loading="lazy">
+    </details>
 
-                <div>Yahan Closure Traps in Loops ke notes likho.</div>
+    <details>
+        <summary>Arrow Functions</summary>
+        <p>
+            Arrow functions <strong>do not have their own <code>this</code></strong>.
+            They inherit it from the surrounding (lexical) scope.
+        </p>
+        <pre><code>const user = {
+  name: "Yogesh",
 
-            </details>
-        </section>
+  greet: () =&gt; {
+    console.log(this.name);   // ❌ undefined
+  },
 
-        <section>
-            <h2>Deep clone/Immutability</h2>
+  greet2() {
+    const inner = () =&gt; console.log(this.name);  // ✅
+    inner();
+  }
+};
 
-            <details>
-                <summary>StucturedClone</summary>
+user.greet();   // undefined (this = outer scope, not user)
+user.greet2();  // "Yogesh"  (arrow grabbed this from greet2)
+</code></pre>
+        <p>
+            <strong>Rule of thumb:</strong>
+            use arrow functions for callbacks (map, filter, setTimeout),
+            but avoid them for object methods that need <code>this</code>.
+        </p>
+        <img src="./assets/images/frontend-javascript/arrow-vs-regular-this.svg"
+             alt="Regular function gets its own this; arrow function inherits from parent scope" loading="lazy">
+    </details>
 
-                <p>
-                    Lexical scope ka matlab hai ki variable ko uski
-                    code ki position ke according access kiya jata hai.
-                </p>
+    <details>
+        <summary>Quick reference</summary>
+        <table>
+            <thead>
+                <tr><th>How it's called</th><th><code>this</code> is</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>obj.method()</code></td><td><code>obj</code></td></tr>
+                <tr><td><code>fn()</code> (plain call)</td><td><code>undefined</code> (strict) / <code>window</code></td></tr>
+                <tr><td><code>fn.call(x)</code> / <code>.apply(x)</code> / <code>.bind(x)</code></td><td><code>x</code></td></tr>
+                <tr><td><code>new Fn()</code></td><td>the newly created object</td></tr>
+                <tr><td>Arrow function</td><td>inherited from parent scope</td></tr>
+            </tbody>
+        </table>
+    </details>
 
+</section>
 
-            </details>
+<section>
+    <h2>Deep Clone &amp; Immutability</h2>
 
+    <details>
+        <summary>Shallow vs Deep copy</summary>
+        <p>
+            <strong>Shallow copy</strong> copies only the first level. Nested
+            objects/arrays are still <em>shared</em> between the original and
+            the copy.<br>
+            <strong>Deep copy</strong> copies everything, all the way down —
+            no shared references.
+        </p>
+        <pre><code>const original = { user: { name: "Yogesh" } };
 
-            <details>
-                <summary>Spread vs deep copy</summary>
+// Shallow
+const shallow = { ...original };
+shallow.user.name = "Yogi";
+console.log(original.user.name);  // "Yogi"  ❌ shared!
 
-                <p>Yahan Closure Traps in Loops ke notes likho.</p>
-            </details>
+// Deep
+const deep = structuredClone(original);
+deep.user.name = "Yogi";
+console.log(original.user.name);  // "Yogesh"  ✅ safe
+</code></pre>
+        <img src="./assets/images/frontend-javascript/shallow-vs-deep.svg"
+             alt="Shallow copy shares nested references; deep copy clones everything" loading="lazy">
+    </details>
 
-  
-    </section>
+    <details>
+        <summary>structuredClone()</summary>
+        <p>
+            The modern, built-in way to deep clone. Works in all modern
+            browsers and Node 17+. <strong>One line, no library.</strong>
+        </p>
+        <pre><code>const clone = structuredClone(original);
+</code></pre>
+        <p><strong>Supports:</strong></p>
+        <ul>
+            <li>Plain objects &amp; arrays</li>
+            <li>Date, RegExp, Map, Set, Blob, File</li>
+            <li>Circular references (yes, really!)</li>
+            <li>Typed arrays &amp; ArrayBuffer</li>
+        </ul>
+        <p><strong>Does NOT support:</strong></p>
+        <ul>
+            <li>Functions</li>
+            <li>DOM nodes</li>
+            <li>Class prototypes (result loses its class)</li>
+            <li>Symbols, WeakMap, WeakSet</li>
+        </ul>
+        <pre><code>const obj = {
+  date: new Date(),
+  map: new Map([["a", 1]]),
+  arr: [1, 2, { x: 3 }],
+};
 
-    <section>
-        <h2>Currying & Composition</h2>
+const copy = structuredClone(obj);
+copy.arr[2].x = 99;
+console.log(obj.arr[2].x);  // 3  ✅ original safe
+</code></pre>
+    </details>
 
-        <details>
-            <summary>Funtional Programming patterns</summary>
+    <details>
+        <summary>Spread vs Deep copy</summary>
+        <p>
+            <code>...</code> (spread) and <code>Object.assign()</code> do
+            <strong>shallow</strong> copies. Fine for flat objects, dangerous
+            for nested ones.
+        </p>
+        <pre><code>// ✅ Safe — flat object
+const a = { x: 1, y: 2 };
+const b = { ...a };
 
-            <p>
-                Lexical scope ka matlab hai ki variable ko uski
-                code ki position ke according access kiya jata hai.
-            </p>
+// ❌ Dangerous — nested object
+const c = { user: { name: "A" } };
+const d = { ...c };
+d.user.name = "B";       // c.user.name also becomes "B" 😱
+</code></pre>
+        <p><strong>Deep copy options compared:</strong></p>
+        <table>
+            <thead>
+                <tr><th>Method</th><th>Deep?</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>{ ...obj }</code></td><td>❌</td><td>Shallow, fastest</td></tr>
+                <tr><td><code>Object.assign({}, obj)</code></td><td>❌</td><td>Shallow</td></tr>
+                <tr><td><code>JSON.parse(JSON.stringify(obj))</code></td><td>✅</td><td>Loses Date, Map, Set, undefined</td></tr>
+                <tr><td><code>structuredClone(obj)</code></td><td>✅</td><td>Built-in, handles most types</td></tr>
+                <tr><td><code>_.cloneDeep(obj)</code></td><td>✅</td><td>Lodash, most flexible</td></tr>
+            </tbody>
+        </table>
+        <img src="./assets/images/frontend-javascript/deep-copy-methods.svg"
+             alt="Comparison of deep copy methods and their trade-offs" loading="lazy">
+    </details>
 
+    <details>
+        <summary>Immutability — why it matters</summary>
+        <p>
+            <strong>Immutability</strong> means: never mutate data in place.
+            Always create a new version. This makes React re-renders, state
+            comparisons, and debugging far easier.
+        </p>
+        <pre><code>// ❌ Mutating
+state.user.name = "New";
+setState(state);           // React may not detect the change
 
-        </details>
+// ✅ Immutable
+setState({
+  ...state,
+  user: { ...state.user, name: "New" }
+});
+</code></pre>
+        <p>
+            React and Redux compare by <strong>reference</strong>
+            (<code>prev !== next</code>). If you mutate in place, the
+            reference stays the same — and React thinks nothing changed.
+        </p>
+    </details>
 
+    <details>
+        <summary>Object.freeze()</summary>
+        <p>
+            A shallow way to enforce immutability. It makes top-level
+            properties read-only — but nested objects can still be mutated.
+        </p>
+        <pre><code>const config = Object.freeze({
+  theme: "dark",
+  nested: { color: "blue" }
+});
 
+config.theme = "light";           // ❌ silently ignored
+config.nested.color = "red";      // ✅ still allowed! (shallow freeze)
 
-    </section>
-  
-      </main>
+// Deep freeze helper
+function deepFreeze(obj) {
+  Object.values(obj).forEach(v =&gt; {
+    if (typeof v === "object" &amp;&amp; v !== null) deepFreeze(v);
+  });
+  return Object.freeze(obj);
+}
+</code></pre>
+    </details>
 
-  <!-- RIGHT -->
-  <aside id="rightbar" aria-label="On this page and sponsors"></aside>
+    <details>
+        <summary>Quick rules</summary>
+        <ul>
+            <li>Use <code>structuredClone()</code> for deep copies — no library needed.</li>
+            <li>Use spread only for <strong>flat</strong> objects.</li>
+            <li>Never mutate React state directly — always return a new object.</li>
+            <li><code>Object.freeze</code> is shallow; deep-freeze manually if needed.</li>
+            <li>For class instances, <code>structuredClone</code> loses the prototype — use a custom <code>clone()</code> method instead.</li>
+        </ul>
+    </details>
 
-  <script src="./js/navbar.js"></script>
-  <script src="./js/rightbar.js"></script>
+</section>
+
+<section>
+    <h2>Currying &amp; Composition</h2>
+
+    <details>
+        <summary>Functional Programming — the idea</summary>
+        <p>
+            Functional Programming (FP) treats functions as <strong>values</strong> —
+            you can pass them around, return them, and combine them like
+            Lego blocks. Two patterns you'll see everywhere:
+            <strong>currying</strong> and <strong>composition</strong>.
+        </p>
+        <p>
+            Goal: write small, pure, reusable functions, then glue them
+            together to build bigger behaviour.
+        </p>
+    </details>
+
+    <details>
+        <summary>Currying — one argument at a time</summary>
+        <p>
+            <strong>Currying</strong> turns a function that takes many
+            arguments into a chain of functions that each take <em>one</em>.
+        </p>
+        <pre><code>// Normal
+const add = (a, b, c) =&gt; a + b + c;
+add(1, 2, 3);   // 6
+
+// Curried
+const addC = a =&gt; b =&gt; c =&gt; a + b + c;
+addC(1)(2)(3);  // 6
+</code></pre>
+        <p>
+            Why bother? Because you can <strong>partially apply</strong> it
+            and reuse the middle steps.
+        </p>
+        <pre><code>const add5 = addC(5);
+
+add5(1)(2);   // 8
+add5(10)(20); // 35
+</code></pre>
+        <img src="./assets/images/frontend-javascript/currying.svg"
+             alt="Currying: multi-arg function becomes a chain of single-arg functions" loading="lazy">
+    </details>
+
+    <details>
+        <summary>Real-world currying</summary>
+        <p>Currying shines when you need reusable, configurable functions.</p>
+
+        <h3>1. Log with a prefix</h3>
+        <pre><code>const log = prefix =&gt; message =&gt; console.log(`[${prefix}] ${message}`);
+
+const info  = log("INFO");
+const error = log("ERROR");
+
+info("Server started");     // [INFO] Server started
+error("DB connection lost");// [ERROR] DB connection lost
+</code></pre>
+
+        <h3>2. API with a base URL</h3>
+        <pre><code>const api = base =&gt; path =&gt; fetch(base + path).then(r =&gt; r.json());
+
+const fetchUser = api("https://api.example.com");
+
+fetchUser("/user/1");
+fetchUser("/posts");
+</code></pre>
+
+        <h3>3. Validation</h3>
+        <pre><code>const min = n =&gt; value =&gt; value.length &gt;= n;
+
+const minPassword = min(8);
+minPassword("secret");       // false
+minPassword("supersecret");  // true
+</code></pre>
+    </details>
+
+    <details>
+        <summary>Generic curry helper</summary>
+        <p>
+            You don't have to write curried functions by hand — a helper
+            can curry any function.
+        </p>
+        <pre><code>const curry = (fn) =&gt; {
+  return function curried(...args) {
+    if (args.length &gt;= fn.length) return fn(...args);
+    return (...next) =&gt; curried(...args, ...next);
+  };
+};
+
+const add = curry((a, b, c) =&gt; a + b + c);
+
+add(1)(2)(3);     // 6
+add(1, 2)(3);     // 6
+add(1)(2, 3);     // 6
+add(1, 2, 3);     // 6
+</code></pre>
+    </details>
+
+    <details>
+        <summary>Composition — pipe data through functions</summary>
+        <p>
+            <strong>Composition</strong> means combining small functions so
+            the output of one becomes the input of the next.
+        </p>
+        <pre><code>const compose = (...fns) =&gt; x =&gt; fns.reduceRight((v, f) =&gt; f(v), x);
+const pipe    = (...fns) =&gt; x =&gt; fns.reduce((v, f) =&gt; f(v), x);
+</code></pre>
+        <ul>
+            <li><code>compose</code> — right-to-left (math style)</li>
+            <li><code>pipe</code> — left-to-right (easier to read)</li>
+        </ul>
+        <pre><code>const trim      = str =&gt; str.trim();
+const lower     = str =&gt; str.toLowerCase();
+const dash      = str =&gt; str.replace(/\s+/g, "-");
+
+const slug = pipe(trim, lower, dash);
+
+slug("  Hello World  ");   // "hello-world"
+</code></pre>
+        <img src="./assets/images/frontend-javascript/pipe-compose.svg"
+             alt="Pipe: value flows left to right through each function" loading="lazy">
+    </details>
+
+    <details>
+        <summary>Currying + Composition together</summary>
+        <p>They pair beautifully — curry your helpers, then pipe them.</p>
+        <pre><code>const map    = fn =&gt; arr =&gt; arr.map(fn);
+const filter = fn =&gt; arr =&gt; arr.filter(fn);
+const reduce = (fn, init) =&gt; arr =&gt; arr.reduce(fn, init);
+
+const double   = x =&gt; x * 2;
+const isEven   = x =&gt; x % 2 === 0;
+const sum      = (a, b) =&gt; a + b;
+
+const process = pipe(
+  filter(isEven),
+  map(double),
+  reduce(sum, 0)
+);
+
+process([1, 2, 3, 4, 5]);   // (2+4)*2 = 12
+</code></pre>
+    </details>
+
+    <details>
+        <summary>When NOT to use it</summary>
+        <ul>
+            <li>Deeply nested <code>a =&gt; b =&gt; c =&gt; ...</code> hurts readability.</li>
+            <li>If a function is called only once, don't bother currying.</li>
+            <li>Performance: currying creates closures — usually fine, but avoid in hot loops.</li>
+            <li>Team unfamiliar with FP? A simple <code>function</code> beats clever one-liners.</li>
+        </ul>
+    </details>
+
+</section>
+    </main>
+
+    <!-- RIGHT -->
+    <aside id="rightbar" aria-label="On this page and sponsors"></aside>
+
+    <script src="./js/navbar.js"></script>
+    <script src="./js/rightbar.js"></script>
 
 </body>
 
