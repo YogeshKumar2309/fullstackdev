@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev-jobs-boards</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="./components/navbar.css">
+    <link rel="stylesheet" href="./components/rightbar.css">
+    <style>
+        .project {
+            padding: 1rem 0;
+            margin-bottom: 2.1rem;
+        }
+
+        .heading {
+            font-size: 1.2rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #010822e3;
+        }
+
+        .box {
+            display: flex;
+            gap: 1rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #010822e3;
+            padding: 0.5rem 0;
+
+            span {
+                background-color: #f0f0f0;
+                padding: 0.3rem 0.5rem;
+                border-radius: 4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar"></div>
+    <main>
+
+        <h1>Phase 8. </h1>
+
+        <div class="project">
+            <h4 class="heading">
+                Ek full-featured job listing platform jisme users jobs search kar sakwin, filter kar sakin , save kar
+                sakein aur apply kar sakein Real world app jisme har frontend skill use hoti hai
+
+                <hr />
+                A full-featured job listing platform where users can search jobs,
+                filter them, save them, and apply for them. A real-world app that
+                uses every modern frontend skill, backed by Firebase for auth,
+                database, and hosting.
+            </h4>
+
+            <div class="box">
+                <span>
+                    React18
+                </span>
+                <span>
+                    Typscript
+                </span>
+                <span>
+                    React Query
+                </span>
+                <span>
+                    Zustand
+                </span>
+                <span>
+                    TailwindCSS
+                </span>
+                <span>
+                    Jest + RTL
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <section>
+            <h2>
+                Search & Filter
+            </h2>
+            <details>
+                <summary>
+                    Debounced search
+                </summary>
+            </details>
+            <details>
+                <summary>
+                    Multi-filter (Location, Type, Salary)
+                </summary>
+            </details>
+
+            <div class="box">
+                <span>useCallback</span>
+                <span>Custom hook</span>
+
+            </div>
+
+        </section>
+        <section>
+            <h2>
+                Infinite scroll
+            </h2>
+            <details>
+                <summary>
+                    Jobs paginated list with Interesction Observer API
+                </summary>
+            </details>
+
+
+            <div class="box">
+                <span>Performance</span>
+                <span>React Query</span>
+
+            </div>
+
+        </section>
+
+        <section>
+            <h2>
+                Save jobs to local storage
+            </h2>
+            <details>
+                <summary>
+                    Bookmark jobs, persist in local storage via Zustand
+                </summary>
+            </details>
+
+
+            <div class="box">
+                <span>State mgmt</span>
+                <span>Zustand</span>
+
+            </div>
+
+        </section>
+
+        <section>
+            <h2>
+                Dark Mode
+            </h2>
+            <details>
+                <summary>
+                    Theme toggle , CSS variables, persist perference in local storage
+                </summary>
+            </details>
+
+
+            <div class="box">
+                <span>CSS vars</span>
+                <span>Context</span>
+
+            </div>
+
+        </section>
+
+
+
+        <section>
+            <h2>
+                Auth Flow
+            </h2>
+            <details>
+                <summary>
+                    Login/signup form with validation, protected routes
+                </summary>
+            </details>
+
+
+            <div class="box">
+                <span>React Routes</span>
+                <span>Forms</span>
+
+            </div>
+
+        </section>
+
+        <section>
+            <h2>Firebase Backend</h2>
+
+            <!-- ============ BEGINNER ============ -->
+            <h3>1. Beginner — Firebase Basics</h3>
+
+            <details>
+                <summary>What is Firebase? (BaaS concept)</summary>
+                <p>
+                    Firebase is a Backend-as-a-Service (BaaS) by Google. Instead of
+                    building your own server, database, and auth system, Firebase
+                    gives you ready-made services that talk directly to your
+                    frontend via SDK. No Express, no MongoDB setup — just SDK calls.
+                </p>
+            </details>
+
+            <details>
+                <summary>Create a Firebase project &amp; get config keys</summary>
+                <p>
+                    Go to <code>console.firebase.google.com</code> → Add project →
+                    Register a web app → Copy the <code>firebaseConfig</code> object
+                    (apiKey, authDomain, projectId, etc.). These keys are safe to
+                    expose in the frontend.
+                </p>
+            </details>
+
+            <details>
+                <summary>Install &amp; initialize Firebase SDK in the project</summary>
+                <pre><code>npm install firebase
+
+// src/firebase.js
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+const firebaseConfig = { /* your keys */ };
+const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Firebase console walkthrough</summary>
+                <p>
+                    Learn the dashboard: Authentication tab, Firestore Data tab,
+                    Storage tab, Hosting tab, and Rules tab. You will use all five
+                    throughout this project.
+                </p>
+            </details>
+
+
+            <!-- ============ INTERMEDIATE ============ -->
+            <h3>2. Intermediate — Auth &amp; Database</h3>
+
+            <details>
+                <summary>Firebase Auth — email/password signup &amp; login</summary>
+                <pre><code>import { createUserWithEmailAndPassword,
+         signInWithEmailAndPassword } from "firebase/auth";
+
+await createUserWithEmailAndPassword(auth, email, password);
+await signInWithEmailAndPassword(auth, email, password);
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Google Sign-In with popup</summary>
+                <pre><code>import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+const provider = new GoogleAuthProvider();
+await signInWithPopup(auth, provider);
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Auth state listener — keep user logged in across refresh</summary>
+                <pre><code>import { onAuthStateChanged } from "firebase/auth";
+
+onAuthStateChanged(auth, (user) => {
+  if (user) setCurrentUser(user);   // logged in
+  else setCurrentUser(null);        // logged out
+});
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Protected routes with React Router</summary>
+                <p>
+                    Wrap private routes in a <code>&lt;ProtectedRoute /&gt;</code>
+                    component that checks <code>currentUser</code>. If null →
+                    redirect to <code>/login</code>.
+                </p>
+            </details>
+
+            <details>
+                <summary>Firestore CRUD — create, read, update, delete a job</summary>
+                <pre><code>import { collection, addDoc, getDocs,
+         doc, updateDoc, deleteDoc } from "firebase/firestore";
+
+// Create
+await addDoc(collection(db, "jobs"), { title, company, location });
+
+// Read
+const snap = await getDocs(collection(db, "jobs"));
+const jobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+// Update
+await updateDoc(doc(db, "jobs", id), { saved: true });
+
+// Delete
+await deleteDoc(doc(db, "jobs", id));
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Real-time updates with onSnapshot</summary>
+                <pre><code>import { onSnapshot, collection } from "firebase/firestore";
+
+const unsub = onSnapshot(collection(db, "jobs"), (snap) => {
+  setJobs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+});
+// cleanup: unsub();
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Firestore data modeling — jobs, savedJobs, appliedJobs, users</summary>
+                <pre><code>users/{uid}
+  ├─ name, email, photoURL, resumeURL, createdAt
+
+jobs/{jobId}
+  ├─ title, company, location, salary, type, tags[]
+
+users/{uid}/savedJobs/{jobId}
+  ├─ savedAt
+
+users/{uid}/appliedJobs/{jobId}
+  ├─ appliedAt, status
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Firebase Storage — upload resume &amp; profile picture</summary>
+                <pre><code>import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+const fileRef = ref(storage, `resumes/${uid}/${file.name}`);
+await uploadBytes(fileRef, file);
+const url = await getDownloadURL(fileRef);
+// save `url` in Firestore users/{uid}.resumeURL
+</code></pre>
+            </details>
+
+
+            <!-- ============ ADVANCED / BACKEND ============ -->
+            <h3>3. Advanced — Real Backend Setup</h3>
+
+            <details>
+                <summary>Security Rules — only owner can read/write their data</summary>
+                <pre><code>// Firestore rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /jobs/{jobId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null
+                         &amp;&amp; request.auth.uid == uid;
+    }
+  }
+}
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Storage rules — protect uploads</summary>
+                <pre><code>service firebase.storage {
+  match /b/{bucket}/o {
+    match /resumes/{uid}/{file} {
+      allow read, write: if request.auth.uid == uid;
+    }
+  }
+}
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Composite indexes — for multi-filter + sort queries</summary>
+                <pre><code>import { query, where, orderBy, limit,
+         startAfter, getDocs } from "firebase/firestore";
+
+const q = query(
+  collection(db, "jobs"),
+  where("location", "==", city),
+  where("type", "==", "full-time"),
+  orderBy("postedAt", "desc"),
+  limit(10)
+);
+</code></pre>
+                <p>
+                    Firebase will throw a link in console to create the composite
+                    index automatically. Click it and wait 1–2 min.
+                </p>
+            </details>
+
+            <details>
+                <summary>Pagination + Infinite scroll with startAfter</summary>
+                <pre><code>let lastDoc = null;
+
+async function loadMore() {
+  const q = query(
+    collection(db, "jobs"),
+    orderBy("postedAt", "desc"),
+    startAfter(lastDoc),
+    limit(10)
+  );
+  const snap = await getDocs(q);
+  lastDoc = snap.docs[snap.docs.length - 1];
+  setJobs(prev => [...prev, ...snap.docs.map(d => d.data())]);
+}
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Cloud Functions — server-side logic (e.g. send email on apply)</summary>
+                <pre><code>// functions/index.js
+import { onCall } from "firebase-functions/v2/https";
+
+export const applyToJob = onCall(async (req) => {
+  const { jobId } = req.data;
+  if (!req.auth) throw new Error("Unauthorized");
+  // write to Firestore, send email, etc.
+});
+</code></pre>
+                <p>Deploy: <code>firebase deploy --only functions</code></p>
+            </details>
+
+            <details>
+                <summary>Emulator Suite — test locally without touching prod</summary>
+                <pre><code>firebase init emulators
+firebase emulators:start
+</code></pre>
+                <p>
+                    Runs Auth, Firestore, Storage, Functions locally on
+                    <code>localhost:4000</code>. Connect your app by setting
+                    <code>connectAuthEmulator</code>, <code>connectFirestoreEmulator</code>, etc.
+                </p>
+            </details>
+
+            <details>
+                <summary>Environment variables — keep config safe</summary>
+                <pre><code># .env.local
+VITE_FIREBASE_API_KEY=xxx
+VITE_FIREBASE_AUTH_DOMAIN=xxx
+VITE_FIREBASE_PROJECT_ID=xxx
+
+# in code
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  ...
+};
+</code></pre>
+            </details>
+
+            <details>
+                <summary>Firebase Hosting — deploy the production build</summary>
+                <pre><code>npm run build
+firebase login
+firebase init hosting
+  → public dir: dist
+  → single-page app: yes
+firebase deploy
+</code></pre>
+                <p>
+                    Live at <code>https://your-project.web.app</code> in seconds.
+                    Add custom domain from the Hosting dashboard.
+                </p>
+            </details>
+
+            <details>
+                <summary>Analytics &amp; Performance monitoring (optional)</summary>
+                <p>
+                    Add <code>firebase/analytics</code> and
+                    <code>firebase/performance</code> SDKs to track page views,
+                    user events, and slow network calls.
+                </p>
+            </details>
+
+            <div class="box">
+                <span>Firebase Auth</span>
+                <span>Firestore</span>
+                <span>Storage</span>
+                <span>Hosting</span>
+                <span>Cloud Functions</span>
+                <span>Security Rules</span>
+                <span>Emulator Suite</span>
+                <span>Analytics</span>
+            </div>
+        </section>
+
+
+        <section>
+            <h2>
+                Dashboard
+            </h2>
+            <details>
+                <summary>
+                    Applied jobs fracker, stats update, stats
+                </summary>
+            </details>
+
+
+            <div class="box">
+                <span>useReducer</span>
+                <span>memoization</span>
+
+            </div>
+
+        </section>
+
+
+        <section>
+            <h2>
+                Unit Tests
+            </h2>
+            <details>
+                <summary>
+                    Search component, filter logic, custom hooks test
+                </summary>
+            </details>
+
+
+            <div class="box">
+                <span>Jest</span>
+                <span>RTL</span>
+
+            </div>
+
+        </section>
+
+        <section>
+            <h2>
+                Responsive UI
+            </h2>
+            <details>
+                <summary>
+                    Mobile-first design, TailwindCSS breakpoints
+                </summary>
+            </details>
+
+
+            <div class="box">
+                <span>CSS Grid</span>
+                <span>Flexbox</span>
+
+            </div>
+
+        </section>
+
+
+
+    </main>
+
+    <!-- RIGHT -->
+    <aside id="rightbar" aria-label="On this page and sponsors"></aside>
+
+    <script src="./js/navbar.js"></script>
+    <script src="./js/rightbar.js"></script>
+
+</body>
+
+</html>
